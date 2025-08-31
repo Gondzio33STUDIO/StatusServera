@@ -4,44 +4,15 @@
   <meta charset="UTF-8">
   <title>Status serwisów - ręczny</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 50px;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-    input, button, select {
-      padding: 8px 15px;
-      margin: 10px;
-      font-size: 16px;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-      margin-top: 30px;
-      flex-grow: 1;
-    }
-    li {
-      margin: 12px 0;
-      font-size: 18px;
-    }
+    body { font-family: Arial; text-align: center; margin-top:50px; display:flex; flex-direction:column; min-height:100vh; }
+    input, button, select { padding:8px 15px; margin:10px; font-size:16px; }
+    ul { list-style:none; padding:0; margin-top:30px; flex-grow:1; }
+    li { margin:12px 0; font-size:18px; }
     .online { color: green; }
     .offline { color: red; }
     .working { color: orange; }
-    footer {
-      margin-top: auto;
-      padding: 20px;
-      font-size: 14px;
-      color: #666;
-    }
-    a {
-      text-decoration: none;
-      color: #007BFF;
-      margin-bottom: 20px;
-      display: inline-block;
-    }
+    footer { margin-top:auto; padding:20px; font-size:14px; color:#666; }
+    a { text-decoration:none; color:#007BFF; margin-bottom:20px; display:inline-block; }
   </style>
 </head>
 <body>
@@ -73,30 +44,35 @@
       const status = document.getElementById("statusInput").value.trim();
       const li = document.getElementById(site);
 
-      if (!status) {
-        alert("Podaj status!");
-        return;
-      }
+      if (!status) { alert("Podaj status!"); return; }
 
       li.textContent = `${site.charAt(0).toUpperCase() + site.slice(1)} – ${status}`;
 
-      // Kolor według słowa
-      if (status.toLowerCase().includes("prace") || status.toLowerCase().includes("w trakcie")) {
-        li.className = "working";
-      } else if (status.toLowerCase().includes("online")) {
-        li.className = "online";
-      } else if (status.toLowerCase().includes("offline") || status.toLowerCase().includes("błąd")) {
-        li.className = "offline";
-      } else {
-        li.className = "";
-      }
+      // kolor według słowa
+      if (status.toLowerCase().includes("prace")) li.className = "working";
+      else if (status.toLowerCase().includes("online")) li.className = "online";
+      else if (status.toLowerCase().includes("offline") || status.toLowerCase().includes("błąd")) li.className = "offline";
+      else li.className = "";
+
+      // zapis statusu w localStorage (działa na obu stronach)
+      localStorage.setItem(site, status);
 
       document.getElementById("statusInput").value = "";
     }
+
+    // odczyt z localStorage przy starcie
+    for (const site of ["sklep","forum"]) {
+      const saved = localStorage.getItem(site);
+      if (saved) {
+        const li = document.getElementById(site);
+        li.textContent = `${site.charAt(0).toUpperCase() + site.slice(1)} – ${saved}`;
+        if (saved.toLowerCase().includes("prace")) li.className = "working";
+        else if (saved.toLowerCase().includes("online")) li.className = "online";
+        else if (saved.toLowerCase().includes("offline") || saved.toLowerCase().includes("błąd")) li.className = "offline";
+      }
+    }
   </script>
 
-  <footer>
-    © WelonekAI
-  </footer>
+  <footer>© WelonekAI</footer>
 </body>
 </html>
