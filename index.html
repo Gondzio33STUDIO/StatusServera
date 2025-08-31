@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <title>Status serwisów</title>
+  <title>Status serwisów - automatycznie</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -36,10 +36,17 @@
       font-size: 14px;
       color: #666;
     }
+    a {
+      text-decoration: none;
+      color: #007BFF;
+      margin-bottom: 20px;
+      display: inline-block;
+    }
   </style>
 </head>
 <body>
   <h1>🌍 Status serwisów</h1>
+  <a href="status-reczny.html">🔧 Przejdź do ręcznego ustawiania statusów</a>
   <button onclick="checkSites()">🔎 Sprawdź wszystkie</button>
 
   <ul id="results">
@@ -50,7 +57,7 @@
   <script>
     const sites = {
       sklep: { name: "Sklep", url: "https://trzmiel.com.pl" },
-      forum: { name: "Forum", url: "http://hospital-male.gl.at.ply.gg:36984/public/index.php" }
+      forum: { name: "Forum", url: "http://localhost" }
     };
 
     function checkSites() {
