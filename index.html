@@ -2,46 +2,17 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <title>Status serwisów - automatycznie</title>
+  <title>Status serwisów</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 50px;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-    button {
-      padding: 10px 20px;
-      margin: 10px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-      margin-top: 30px;
-      flex-grow: 1;
-    }
-    li {
-      margin: 12px 0;
-      font-size: 18px;
-    }
+    body { font-family: Arial; text-align: center; margin-top:50px; display:flex; flex-direction:column; min-height:100vh; }
+    button { padding:10px 20px; margin:10px; cursor:pointer; font-size:16px; }
+    ul { list-style:none; padding:0; margin-top:30px; flex-grow:1; }
+    li { margin:12px 0; font-size:18px; }
     .online { color: green; }
     .offline { color: red; }
-    footer {
-      margin-top: auto;
-      padding: 20px;
-      font-size: 14px;
-      color: #666;
-    }
-    a {
-      text-decoration: none;
-      color: #007BFF;
-      margin-bottom: 20px;
-      display: inline-block;
-    }
+    .working { color: orange; }
+    footer { margin-top:auto; padding:20px; font-size:14px; color:#666; }
+    a { text-decoration:none; color:#007BFF; margin-bottom:20px; display:inline-block; }
   </style>
 </head>
 <body>
@@ -60,6 +31,20 @@
       forum: { name: "Forum", url: "http://localhost" }
     };
 
+    function updateFromStorage() {
+      for (const id in sites) {
+        const li = document.getElementById(id);
+        const savedStatus = localStorage.getItem(id);
+        if (savedStatus) {
+          li.textContent = `${sites[id].name} – ${savedStatus}`;
+          if (savedStatus.toLowerCase().includes("prace")) li.className = "working";
+          else if (savedStatus.toLowerCase().includes("online")) li.className = "online";
+          else if (savedStatus.toLowerCase().includes("offline") || savedStatus.toLowerCase().includes("błąd")) li.className = "offline";
+          else li.className = "";
+        }
+      }
+    }
+
     function checkSites() {
       for (const [id, site] of Object.entries(sites)) {
         const li = document.getElementById(id);
@@ -74,17 +59,24 @@
               li.textContent = site.name + " – ⚠️ Błąd: " + response.status;
               li.className = "offline";
             }
+            // zapis statusu w localStorage
+            localStorage.setItem(id, li.textContent.split("–")[1].trim());
           })
           .catch(() => {
             li.textContent = site.name + " – ❌ OFFLINE lub niedostępna";
             li.className = "offline";
+            localStorage.setItem(id, "OFFLINE lub niedostępna");
           });
       }
     }
+
+    // odczyt z localStorage przy starcie strony
+    updateFromStorage();
+
+    // nasłuchiwanie zmian w localStorage (z drugiej strony)
+    window.addEventListener('storage', updateFromStorage);
   </script>
 
-  <footer>
-    © WelonekAI
-  </footer>
+  <footer>© WelonekAI</footer>
 </body>
 </html>
